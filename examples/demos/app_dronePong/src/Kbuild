@@ -1,1 +1,1 @@
-obj-y += push.o
+obj-y += dronePong.o
