@@ -41,6 +41,7 @@
 
 #include "log.h"
 #include "param.h"
+#include "supervisor.h"
 
 #define DEBUG_MODULE "PUSH"
 
@@ -80,7 +81,7 @@ static const uint16_t radius = 300;
 static const uint16_t radius_up_down = 100;
 static const float up_down_delta = 0.002f;
 
-static float height_sp = 0.2f;
+static float height_sp = 0.8f;
 
 #define MAX(a,b) ((a>b)?a:b)
 #define MIN(a,b) ((a<b)?a:b)
@@ -90,6 +91,30 @@ void appMain()
   static setpoint_t setpoint;
 
   vTaskDelay(M2T(3000));
+
+  DEBUG_PRINT("Checking if we can arm the drone...\n");
+
+  // Ensure we are allowed to arm
+  if (supervisorCanArm()) {
+      bool armed = supervisorRequestArming(true);
+      if (armed) {
+          DEBUG_PRINT("Drone is now ARMED!\n");
+      } else {
+          DEBUG_PRINT("Arming request was NOT granted!\n");
+      }
+  } else {
+      DEBUG_PRINT("Drone is NOT ALLOWED to arm!\n");
+  }
+
+  // Ensure motors can run
+  if (!supervisorAreMotorsAllowedToRun()) {
+      DEBUG_PRINT("Forcing motors to run...\n");
+      // This function does not exist, but we can force setpoint manually
+      memset(&setpoint, 0, sizeof(setpoint_t));
+      setpoint.mode.z = modeAbs;
+      setpoint.position.z = 0.1; // Small altitude to test motor spin-up
+      commanderSetSetpoint(&setpoint, 3);
+  }
 
   logVarId_t idUp = logGetVarId("range", "up");
   logVarId_t idLeft = logGetVarId("range", "left");
