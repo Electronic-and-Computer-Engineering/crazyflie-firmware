@@ -1,0 +1,3 @@
+obj-y += hal_general.o
+obj-y += hal_timer1.o
+obj-y += hal_timer2.o

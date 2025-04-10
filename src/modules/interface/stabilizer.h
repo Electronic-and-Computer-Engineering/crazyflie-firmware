@@ -43,5 +43,6 @@ void stabilizerInit(StateEstimatorType estimator);
  * @return True if all test has passed. False otherwise.
  */
 bool stabilizerTest(void);
+float stabilizerGetYaw(void);
 
 #endif /* STABILIZER_H_ */

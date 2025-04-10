@@ -1,0 +1,5 @@
+obj-y += dl_general.o
+obj-y += dl_telemetry.o
+obj-y += dl_multiranger.o
+obj-y += dl_flowdeck.o
+obj-y += dl_imu.o

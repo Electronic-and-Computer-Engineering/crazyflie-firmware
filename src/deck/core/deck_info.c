@@ -201,9 +201,11 @@ static void enumerateDecks(void)
                     "Ignoring the deck in DEBUG mode.\n", i);
         deckInfos[i].driver = &dummyDriver;
 #else
-        DEBUG_PRINT("Deck %i has corrupt OW memory. "
-                    "No driver will be initialized!\n", i);
-        noError = false;
+        // DEBUG_PRINT("Deck %i has corrupt OW memory. "
+        //             "No driver will be initialized!\n", i);
+        // noError = false;
+        DEBUG_PRINT("Deck %i has corrupt OW memory. ... I don't care\n", i);
+        deckInfos[i].driver = &dummyDriver;
 #endif
       }
     }

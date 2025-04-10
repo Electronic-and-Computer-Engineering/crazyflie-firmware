@@ -86,8 +86,11 @@ static float height_sp = 0.8f;
 #define MAX(a,b) ((a>b)?a:b)
 #define MIN(a,b) ((a<b)?a:b)
 
+void bleData_send(const setpoint_t *sp); 
+
 void appMain()
 {
+
   static setpoint_t setpoint;
 
   vTaskDelay(M2T(3000));
@@ -107,14 +110,14 @@ void appMain()
   }
 
   // Ensure motors can run
-  if (!supervisorAreMotorsAllowedToRun()) {
-      DEBUG_PRINT("Forcing motors to run...\n");
-      // This function does not exist, but we can force setpoint manually
-      memset(&setpoint, 0, sizeof(setpoint_t));
-      setpoint.mode.z = modeAbs;
-      setpoint.position.z = 0.1; // Small altitude to test motor spin-up
-      commanderSetSetpoint(&setpoint, 3);
-  }
+  // if (!supervisorAreMotorsAllowedToRun()) {
+  //     DEBUG_PRINT("Forcing motors to run...\n");
+  //     // This function does not exist, but we can force setpoint manually
+  //     memset(&setpoint, 0, sizeof(setpoint_t));
+  //     setpoint.mode.z = modeAbs;
+  //     setpoint.position.z = 0.1; // Small altitude to test motor spin-up
+  //     commanderSetSetpoint(&setpoint, 3);
+  // }
 
   logVarId_t idUp = logGetVarId("range", "up");
   logVarId_t idLeft = logGetVarId("range", "left");

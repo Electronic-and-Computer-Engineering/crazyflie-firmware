@@ -1,1 +1,4 @@
 obj-y += dronePong.o
+obj-y += DL/
+obj-y += HAL/
+obj-y += AL/

@@ -172,6 +172,11 @@ static void compressSetpoint()
   setpointCompressed.az = setpoint.acceleration.z * 1000.0f;
 }
 
+float stabilizerGetYaw(void) 
+{
+  return state.attitude.yaw;
+}
+
 void stabilizerInit(StateEstimatorType estimator)
 {
   if(isInit)

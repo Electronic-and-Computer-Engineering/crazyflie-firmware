@@ -1,0 +1,3 @@
+obj-y += al_filter.o
+obj-y += al_math_utils.o
+obj-y += al_mvmts.o
