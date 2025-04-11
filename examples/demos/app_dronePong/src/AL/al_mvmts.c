@@ -59,7 +59,7 @@ void setStabilizer(multiranger_data_t *rngData, drone_data_t *drnData)
         drnData->des_height -= up_down_delta;
       }
 
-      uint16_t up_o = radius - MIN(rngData->up, radius);
+      //uint16_t up_o = radius - MIN(rngData->up, radius);
       drnData->height = drnData->des_height;//
 
 }
@@ -92,7 +92,7 @@ void setStabilizerDir(multiranger_data_t *rngData, drone_data_t *drnData)
         drnData->des_height -= up_down_delta;
       }
 
-      uint16_t up_o = radius - MIN(rngData->up, radius);
+      //uint16_t up_o = radius - MIN(rngData->up, radius);
       drnData->height = drnData->des_height;// - up_o/1000.0f;
       drnData->height = HEIGHT_ALPHA * oldHeight + (1.0f - HEIGHT_ALPHA) * drnData->height;
       oldHeight = drnData->height;

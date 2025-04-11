@@ -38,6 +38,6 @@ static void cbTimer2(TimerHandle_t xTimer)
     //GET DATA FROM DECKS
     dl_flowdeck_read(&sensorDecks.flow);
     dl_multiranger_read(&sensorDecks.multiranger);
-    aiDeck_request();
+    //aiDeck_request();
     //dl_imu_read_yaw(&sensorDecks);   
 }

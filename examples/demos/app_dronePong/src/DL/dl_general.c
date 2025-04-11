@@ -22,5 +22,5 @@ void DL_init(void)
     dl_multiranger_init();
     dl_flowdeck_init();
     dl_imu_init();
-    aiDeck_init();
+    //aiDeck_init();
 }
