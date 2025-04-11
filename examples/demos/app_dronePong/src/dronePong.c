@@ -174,7 +174,11 @@ void appMain(void)
                     }   
                     break;        
                 case DIRECTIONAL:
-                    if (sensorDecks.armed == true)
+                    if ((sensorDecks.endNorth == true) || (sensorDecks.endNorth == true))
+                    {
+                        state = LAND;   
+                    }
+                    else if (sensorDecks.armed == true)
                     {
                         setStabilizerDir(&sensorDecks.multiranger, &droneData);
                         setHoverSetpoint(&setpoint, droneData.velFront, droneData.velSide, droneData.height, droneData.degree);            
@@ -196,7 +200,9 @@ void appMain(void)
                             hitLeft = true;
                             hitFront = false;
                         }                 
-                        else if((sensorDecks.multiranger.front <= 300.0f || sensorDecks.patchDetected) && (hitFront == false))
+                        else if (((sensorDecks.multiranger.front <= 150.0f) || 
+                                    (sensorDecks.multiranger.front <= 300.0f && sensorDecks.patchDetected)) && 
+                                    hitFront == false)
                         {
                             droneData.dirAngle *= -1;
                             if (droneData.degree == 180)
@@ -207,7 +213,7 @@ void appMain(void)
                             hitRight = false;
                             hitLeft = false;
                             hitFront = true;
-                        }
+                        }                                                  
                     }
                     break;    
                 default:

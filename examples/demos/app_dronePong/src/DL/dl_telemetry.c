@@ -20,7 +20,7 @@ void telemetrySendMode(const sensor_data_t *sensor)
     write_u16(pk.data, &i, sensor->multiranger.right);
     write_u16(pk.data, &i, sensor->multiranger.up);
     write_u16(pk.data, &i, sensor->flow.z_mm);
-    write_u16(pk.data, &i, sensor->imuData.iscaledYaw);
+    write_u16(pk.data, &i, sensor->patchDetected);
 
     pk.size = i;
     crtpSendPacket(&pk);
