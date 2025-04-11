@@ -7,6 +7,7 @@
 #include "dl_imu.h"
 #include "dl_general.h"
 #include "dl_telemetry.h"
+#include "dl_aiDeck.h"
 
 static void cbTimer2(TimerHandle_t xTimer);
 static TimerHandle_t timer2 = NULL;
@@ -37,5 +38,6 @@ static void cbTimer2(TimerHandle_t xTimer)
     //GET DATA FROM DECKS
     dl_flowdeck_read(&sensorDecks.flow);
     dl_multiranger_read(&sensorDecks.multiranger);
+    aiDeck_request();
     //dl_imu_read_yaw(&sensorDecks);   
 }

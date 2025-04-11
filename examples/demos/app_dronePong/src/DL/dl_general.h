@@ -30,6 +30,10 @@ typedef struct {
     imu_data_t imuData;
     bool armed;
     bool arm;
+    bool patchDetected;
+    bool endNorth;
+    bool endSouth;
+    bool virtualWall;
 } sensor_data_t;
 
 typedef enum {

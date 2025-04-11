@@ -58,11 +58,23 @@ static void commandPacketHandler(CRTPPacket *pk)
                 state = LAND; 
                 break;
             case 0x10:
-                state = DIRECTIONAL; 
+                state = ROTATE180; 
                 break;
             case 0x12:
                 state = ROTATE0; 
-                break;                 
+                break;
+            case 0x14:
+                state = DIRECTIONAL; 
+                break;
+            case 0x4A:
+                sensorDecks.endNorth = true;
+                break;
+            case 0x4B:
+                sensorDecks.endSouth = true;
+                break;
+            case 0xFF:
+                sensorDecks.virtualWall = true;
+                break;
             default:
                 break;
         }

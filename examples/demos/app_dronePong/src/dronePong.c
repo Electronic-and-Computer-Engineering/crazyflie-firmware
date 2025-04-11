@@ -27,6 +27,8 @@ extern State state;
 #define DEG_TO_RAD (3.14159265f / 180.0f)
 #define RAD_TO_DEG (180.0f / 3.14159265f)
 
+float height_freeze;
+
 void appMain(void)
 {
     /* DRONE DATA*/
@@ -39,6 +41,9 @@ void appMain(void)
     bool hitLeft = false;
     bool hitRight = false; 
     bool hitFront = false;
+    sensorDecks.endNorth = false;
+    sensorDecks.endSouth = false;
+    sensorDecks.virtualWall = false;
 
     setpoint_t setpoint;
     vTaskDelay(M2T(1000));  // Startup delay
@@ -92,11 +97,12 @@ void appMain(void)
                 break;
             case ROTATE180:
                 if (sensorDecks.armed == true)
-                {               
+                {   
+                    height_freeze = droneData.height;            
                     while(droneData.degree < 180.0f)
                     {
                         setStabilizer(&sensorDecks.multiranger, &droneData);
-                        setHoverSetpoint(&setpoint, droneData.velFront, droneData.velSide, droneData.height, droneData.degree);            
+                        setHoverSetpoint(&setpoint, droneData.velFront, droneData.velSide, height_freeze, droneData.degree);            
                         commanderSetSetpoint(&setpoint, 3);
                         droneData.degree = droneData.degree + 2;
                         if (droneData.degree >= 180.0f)
@@ -109,12 +115,13 @@ void appMain(void)
                 }   
                 break;
             case ROTATE0:
+                height_freeze = droneData.height; 
                 if (sensorDecks.armed == true)
-                {       
+                {                                             
                     while(droneData.degree > 0.0f)
                     {
                         setStabilizer(&sensorDecks.multiranger, &droneData);
-                        setHoverSetpoint(&setpoint, droneData.velFront, droneData.velSide, droneData.height, droneData.degree);            
+                        setHoverSetpoint(&setpoint, droneData.velFront, droneData.velSide, height_freeze, droneData.degree);            
                         commanderSetSetpoint(&setpoint, 3);
                         droneData.degree = droneData.degree - 2;
                         if (droneData.degree <= 0.0f)
@@ -127,12 +134,13 @@ void appMain(void)
                 }   
                 break;
             case ROTATE0DIR:
+                height_freeze = droneData.height; 
                 if (sensorDecks.armed == true)
                 {       
                     while(droneData.degree > 0.0f)
                     {
                         setStabilizer(&sensorDecks.multiranger, &droneData);
-                        setHoverSetpoint(&setpoint, droneData.velFront, droneData.velSide, droneData.height, droneData.degree);            
+                        setHoverSetpoint(&setpoint, droneData.velFront, droneData.velSide, height_freeze, droneData.degree);            
                         commanderSetSetpoint(&setpoint, 3);
                         droneData.degree = droneData.degree - 2;
                         if (droneData.degree <= 0.0f)
@@ -140,63 +148,69 @@ void appMain(void)
                             droneData.degree = 0.0f;
                         }
                         vTaskDelay(M2T(20));                        
-                    }  
+                    }
+                    vTaskDelay(M2T(50));    
                     state = DIRECTIONAL;                       
                 }   
                 break;
                 case ROTATE180DIR:
-                if (sensorDecks.armed == true)
-                {               
-                    while(droneData.degree < 180.0f)
-                    {
-                        setStabilizer(&sensorDecks.multiranger, &droneData);
-                        setHoverSetpoint(&setpoint, droneData.velFront, droneData.velSide, droneData.height, droneData.degree);            
-                        commanderSetSetpoint(&setpoint, 3);
-                        droneData.degree = droneData.degree + 2;
-                        if (droneData.degree >= 180.0f)
+                    height_freeze = droneData.height;
+                    if (sensorDecks.armed == true)
+                    {               
+                        while(droneData.degree < 180.0f)
                         {
-                            droneData.degree = 180.0f;
+                            setStabilizer(&sensorDecks.multiranger, &droneData);
+                            setHoverSetpoint(&setpoint, droneData.velFront, droneData.velSide, height_freeze, droneData.degree);            
+                            commanderSetSetpoint(&setpoint, 3);
+                            droneData.degree = droneData.degree + 2;
+                            if (droneData.degree >= 180.0f)
+                            {
+                                droneData.degree = 180.0f;
+                            }
+                            vTaskDelay(M2T(20));                        
                         }
-                        vTaskDelay(M2T(20));                        
-                    }  
-                    state = DIRECTIONAL;                     
-                }   
-                break;        
-            case DIRECTIONAL:
-                if (sensorDecks.armed == true)
-                {
-                    setStabilizerDir(&sensorDecks.multiranger, &droneData);
-                    setHoverSetpoint(&setpoint, droneData.velFront, droneData.velSide, droneData.height, droneData.degree);            
-                    commanderSetSetpoint(&setpoint, 3);    
+                        vTaskDelay(M2T(50));   
+                        state = DIRECTIONAL;                     
+                    }   
+                    break;        
+                case DIRECTIONAL:
+                    if (sensorDecks.armed == true)
+                    {
+                        setStabilizerDir(&sensorDecks.multiranger, &droneData);
+                        setHoverSetpoint(&setpoint, droneData.velFront, droneData.velSide, droneData.height, droneData.degree);            
+                        commanderSetSetpoint(&setpoint, 3);    
 
-                    if((sensorDecks.multiranger.right <= 300.0f) && (hitRight == false))
-                    {
-                        droneData.dirAngle *= -1;
-                        hitRight = true;
-                        hitLeft = false;
-                        hitFront = false;
+                        if((sensorDecks.multiranger.right <= 300.0f || sensorDecks.virtualWall) && (hitRight == false))
+                        {
+                            droneData.dirAngle *= -1;
+                            sensorDecks.virtualWall = false;
+                            hitRight = true;
+                            hitLeft = false;
+                            hitFront = false;
+                        }
+                        else if((sensorDecks.multiranger.left <= 300.0f || sensorDecks.virtualWall) && (hitLeft == false))
+                        {
+                            droneData.dirAngle *= -1;
+                            sensorDecks.virtualWall = false;
+                            hitRight = false;
+                            hitLeft = true;
+                            hitFront = false;
+                        }                 
+                        else if((sensorDecks.multiranger.front <= 300.0f || sensorDecks.patchDetected) && (hitFront == false))
+                        {
+                            droneData.dirAngle *= -1;
+                            if (droneData.degree == 180)
+                                state = ROTATE0DIR;
+                            else if (droneData.degree == 0)
+                                state = ROTATE180DIR;
+
+                            hitRight = false;
+                            hitLeft = false;
+                            hitFront = true;
+                        }
                     }
-                    else if((sensorDecks.multiranger.left <= 300.0f) && (hitLeft == false))
-                    {
-                        droneData.dirAngle *= -1;
-                        hitRight = false;
-                        hitLeft = true;
-                        hitFront = false;
-                    }                 
-                    else if((sensorDecks.multiranger.front <= 300.0f) && (hitFront == false))
-                    {
-                        droneData.dirAngle *= -1;
-                        if (droneData.degree == 180)
-                            state = ROTATE0DIR;
-                        else if (droneData.degree == 0)
-                            state = ROTATE180DIR;
-                        hitRight = false;
-                        hitLeft = false;
-                        hitFront = true;
-                    }
-                }
-                break;    
-            default:
+                    break;    
+                default:
 
                 break;
         }

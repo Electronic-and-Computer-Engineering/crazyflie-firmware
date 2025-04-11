@@ -5,6 +5,7 @@
 #include "dl_flowdeck.h"
 #include "dl_multiranger.h"
 #include "dl_imu.h"
+#include "dl_aiDeck.h"
 
 #include "debug.h"
 
@@ -21,4 +22,5 @@ void DL_init(void)
     dl_multiranger_init();
     dl_flowdeck_init();
     dl_imu_init();
+    aiDeck_init();
 }

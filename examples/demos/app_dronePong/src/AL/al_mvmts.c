@@ -6,11 +6,13 @@
 
 #define MAX(a,b) ((a>b)?a:b)
 #define MIN(a,b) ((a<b)?a:b)
+#define HEIGHT_ALPHA 0.8f
 
-static const float velMax = 1.0f;
+static const float velMax = 0.5f;
 static const uint16_t radius = 300;
 static const uint16_t radius_up_down = 100;
 static const float up_down_delta = 0.002f;
+static float oldHeight = 0.0f;
 
 float factor = velMax/radius;
 
@@ -59,6 +61,7 @@ void setStabilizer(multiranger_data_t *rngData, drone_data_t *drnData)
 
       uint16_t up_o = radius - MIN(rngData->up, radius);
       drnData->height = drnData->des_height - up_o/1000.0f;
+
 }
 
 void setStabilizerDir(multiranger_data_t *rngData, drone_data_t *drnData)
@@ -91,4 +94,6 @@ void setStabilizerDir(multiranger_data_t *rngData, drone_data_t *drnData)
 
       uint16_t up_o = radius - MIN(rngData->up, radius);
       drnData->height = drnData->des_height - up_o/1000.0f;
+      drnData->height = HEIGHT_ALPHA * oldHeight + (1.0f - HEIGHT_ALPHA) * drnData->height;
+
 }

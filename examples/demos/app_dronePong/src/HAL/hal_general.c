@@ -4,6 +4,6 @@
 
 void HAL_init(void) 
 {
-    hal_timer1_init(200);
-    hal_timer2_init(10);
+    hal_timer1_init(34);
+    hal_timer2_init(20);
 }
